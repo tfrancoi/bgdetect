@@ -1,9 +1,10 @@
-\documentclass[11pt,a4paper]{report}
+\documentclass[8pt,a4paper]{report}
 \usepackage{ifpdf}
 \usepackage[utf8]{inputenc}
 \usepackage[francais]{babel}
 \usepackage[pdftex]{graphicx}
 \usepackage{listings}
+\usepackage{multicol}
 \usepackage{array}
 
 
@@ -24,6 +25,7 @@ Benoit Macq \\ Christophe Devleeschouwer \\ Antonin Descampe}
 		\maketitle
 	\end{titlepage}
 
+\begin{multicols}{2}
 \section{Introduction}
 Dans ce projet nous essayons de séparer les éléments du background de ceux du foreground. Nous définissons le background comme les éléments du décors
 qui ne bougent pas, par conséquent notre technique ne fonctionnera qu'avec des images prises d'une caméra fixe. 
@@ -158,13 +160,6 @@ qui ne bougent pas, par conséquent notre technique ne fonctionnera qu'avec des 
    \bibitem{hsv} http://en.wikipedia.org/wiki/HSL\_and\_HSV  
 \end{thebibliography}
 
-
-
-
-
-
-=======
->>>>>>> 4dd90c096516e901d0bca16527fa2b6a10b4728c:repport/repport.tex
-
+\end{multicols}
 
 \end{document}
