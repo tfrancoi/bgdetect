@@ -35,12 +35,16 @@ L'approche par arbres aléatoire permet de classer les pixels selon plusieurs cr
 \section{Random Forest classification}
 
 \section{Tuning des paramètres}
-Il y a de nombreux paramètres à mettre aux points. Il y a trop de paramètres différents pour pouvoir tous les comparés  Dans un premier temps, savoir quelle features choisir, nous avons effectués des tests avec juste l'intensité et ensuite avec l'intensité et les deux gradients. 
+Il y a de nombreux paramètres à mettre aux points. Il y a trop de paramètres différents pour pouvoir tous les comparés, nous avons donc travailler à trouver l'optimal pour un paramètre à la fois. 
 
-Ensuite 
--> Nombre de feature
--> Nombre d'arbre    running
--> Profondeur de l'arbre
+Dans un premier temps, savoir quelle features choisir, nous avons effectués des tests avec juste l'intensité et ensuite avec l'intensité et les deux gradients. 
+
+\% Gradient est une bonne idée
+
+Dans un second temps, la quantité d'arbre aléatoire utilisé pour classifié peut-être choisie. Ici, il faut trouver le juste milieu entre trop d'arbres qui consommerait beaucoup de temps de calcul et pas assez qui ne serait pas assez précis.
+
+La profondeur des arbres est encore un paramètre à déterminer, nous aurions pu décider d'arrêter la profondeur de l'arbre lorsque la découpe des bornes serait suffissante mais il aurait quand même fallut déterminer ``la découpe suffisante''. Nous avons donc choisit de définir nous même la profondeur de l'arbre. Une trop grande profondeur n'est pas forcément souhaitable pour les résultats et est toujours synonimes de plus de calcul, trop peu de profondeur ne permet pas non plus une bonne classification. Par défault nous utilisons une profondeur de 8 pour 3 features. La profondeur des arbres idéale est liée au.
+
 -> Choix heuristique de classification (moyenne / densité)  ok 
 -> Nombre d'arbre sélection
 -> Decision finale (\% de vote)

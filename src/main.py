@@ -22,7 +22,7 @@ def load(dossier_in) :
 	
 	for j in xrange(0, Image[0].getHeight()) :
 			for i in xrange(0, Image[0].getWidth()) :
-				treeSet = TreeSet(20, 3, 255, 8)
+				treeSet = TreeSet(40, 3, 255, 1)
 				for im in Image : 
 					s = Sample(im.getSample((i,j)), im.getFrame())
 					treeSet.insertSample(s)
