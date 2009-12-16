@@ -270,6 +270,26 @@ class Tree:
 		if(self.right):
 			self.right.showAll()
 
+def compare1(tree1,tree2,first = 0, last = -1):
+	h1 = tree1.getEntropy(first,last)
+	h2 = tree2.getEntropy(first,last)
+	if(h1 > h2):
+		return 1
+	elif(h1 == h2):
+		return 0
+	else:
+		return -1
+
+def compare2(tree1,tree2):
+	h1 = tree1.getDensityEntropy(0,-1)
+	h2 = tree2.getDensityEntropy(0,-1)
+	if(h1 > h2):
+		return 1
+	elif (h1 == h2):
+		return 0
+	else:
+		return -1
+
 class TreeSet:
 	def __init__(self,tree_count,feature_count,max_value,level_count):
 		self.tree_count = tree_count
@@ -317,39 +337,21 @@ class TreeSet:
 				votes = votes + 1
 		return float(votes)/float(len(subtrees))
 
-	def compare1(tree1,tree2,first = 0, last = -1):
-		h1 = tree1.getEntropy(first,last)
-		h2 = tree2.getEntropy(first,last)
-		if(h1 > h2):
-			return 1
-		elif(h1 == h2):
-			return 0
-		else:
-			return -1
 	
-	def sort1(first = 0, last = -1):
+	def sort1(self,first = 0, last = -1):
 		if(self.sorted and self.sortrange == (first,last)):
 			return
 		else:
-			self.trees.sort(self.compare1)
+			self.trees.sort(compare1)
 			self.sorted = True
 			self.sortrange = (first,last)
 	
-	def compare2(tree1,tree2,first = 0, last = -1):
-		h1 = tree1.getDensityEntropy(first,last)
-		h2 = tree2.getDensityEntropy(first,last)
-		if(h1 > h2):
-			return 1
-		elif (h1 == h2):
-			return 0
-		else:
-			return -1
 	
-	def sort2(first = 0, last = -1):
-		if(self.sorted and self.sortange == (first,last)):
+	def sort2(self,first = 0, last = -1):
+		if(self.sorted and self.sortrange == (first,last)):
 			return
 		else:
-			self.trees.sort(self.compare2)
+			self.trees.sort(compare2)
 			self.sorted = True
 			self.sortrange = (first,last)
 
