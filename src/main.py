@@ -44,7 +44,7 @@ def load(dossier_in) :
 
 
 def main():
-	dossier_in = "imp"
+	dossier_in = "in"
 	dossier_out = "out"
 	os.system("mkdir out")
 	load(dossier_in)
