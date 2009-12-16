@@ -29,8 +29,13 @@ Dans ce projet nous essayons de séparer les éléments du background de ceux du
 qui ne bougent pas, par conséquent notre technique ne fonctionnera qu'avec des images prises d'une caméra fixe. 
 
 \section{Features extractions}
-L'approche par arbres aléatoire permet de classer les pixels selon plusieurs critères. Ils nous faut donc dans un premier temps définir ces critères. La première feature est l'intensité du pixel, c'est à dire la moyenne des trois composants RGB. Nous avons extrait deux autres features le gradient de l'intensité selon l'horizontale et selon la verticale \cite{gradient} grâce à l'opérateur de convolution de Sobel \cite{sobel}. Nous chargons les images grâce à la bibliothèque \textit{PIL} (Python Image Library). Cette api nous donne un tuple contenant les composantes RBG de l'image pour chaque pixel. L'intensité ce calcul directement et pour la gradient les détails de l'implémentation se trouve dans le fichier \textit{jpg.py} dans la fonction \textit{g()} et les tables des hash \textit{x} et \textit{y} correspondent aux matrices de convolution.  
+	L'approche par arbres aléatoire permet de classer les pixels selon plusieurs critères. Ils nous faut donc dans un premier temps définir ces critères. 
+	La première feature est l'intensité du pixel, c'est à dire la moyenne des trois composants RGB. 
+	Nous avons extrait deux autres features le gradient de l'intensité selon l'horizontale et selon la verticale \cite{gradient} 
+	grâce à l'opérateur de convolution de Sobel \cite{sobel}. L'intérèt du gradiant étant que celui ci reste constant si l'intensité lumineuse globale change,
+	et que celui ci capture la forme de l'objet. 
 
+	D'autres features possibles sont la teinte et la saturation, qui sont elles aussi moins sensibles aux changements d'éclairage de la scène. \cite{hsv} 
 
 \section{Random Forest classification}
 
@@ -112,20 +117,34 @@ L'approche par arbres aléatoire permet de classer les pixels selon plusieurs cr
 			frames, cependant si on utilise un critère de qualité d'arbre, il faut recalculer et retrier à chaque frame.
 
 \section{Tuning des paramètres}
-Il y a de nombreux paramètres à mettre aux points. Il y a trop de paramètres différents pour pouvoir tous les comparés, nous avons donc travailler à trouver l'optimal pour un paramètre à la fois. 
+	Il y a de nombreux paramètres à mettre aux points, et ils sont trop nombreux pour pouvoir tous les comparer, ou pour pouvoir trouver la combinaison optimale.
+	
+	Nous avons donc travaillé sur chaque paramètre indépendemment des autres afin de voir si ils ont une influence positive ou négative sur le résultat. 
+	\subsection{Features}
+		Afin de déterminer la pertinence des features, nous avons fait une première analyse avec l'intensité seule, et ensuite l'intensité 
+		plus les deux gradients.
+		On peut remarquer que l'ajout du gradient donne de bien meilleurs résultats.
+	\subsection{Nombre d'arbres}
+	Augmenter le nombre d'arbres augmente évidemment la précision de l'analyse, jusqu'à un certain point. Un compromis entre le temps de calcul et la
+	précision doit être trouvé au cas par cas. 
 
-Dans un premier temps, savoir quelle features choisir, nous avons effectués des tests avec juste l'intensité et ensuite avec l'intensité et les deux gradients. 
+	\subsection{Profondeur des arbres}
+	La profondeur des arbres est encore un paramètre à déterminer, nous aurions pu décider d'arrêter la profondeur de l'arbre lorsque la découpe 
+	des bornes serait suffissante mais il aurait quand même fallut déterminer ``la découpe suffisante''. Nous avons donc choisi de 
+	définir nous même la profondeur de l'arbre. Une trop grande profondeur n'est pas forcément souhaitable pour les résultats et 
+	est toujours synonyme de plus de calcul, trop peu de profondeur ne permet pas non plus une bonne classification. 
+	Par défault nous utilisons une profondeur de 8 pour 3 features. La profondeur des arbres idéale est liée au nombre de features.
 
-\% Gradient est une bonne idée
+	\subsection{Choix de l'heuristique de classification}
+	Nous avons présenté deux heuristiques de classification. Il s'avère que la seconde est nettement préférable à la première. 
 
-Dans un second temps, la quantité d'arbre aléatoire utilisé pour classifié peut-être choisie. Ici, il faut trouver le juste milieu entre trop d'arbres qui consommerait beaucoup de temps de calcul et pas assez qui ne serait pas assez précis.
+	\subsection{Choix d'arbres de qualité}
+	Choisir des arbres de qualité diminue légèrement le bruit présent dans l'image, mais semble diminuer également la confiance des votes
+	de classification des pixels en tant que foreground. Cela reste un ajout intéressant. 
 
-La profondeur des arbres est encore un paramètre à déterminer, nous aurions pu décider d'arrêter la profondeur de l'arbre lorsque la découpe des bornes serait suffissante mais il aurait quand même fallut déterminer ``la découpe suffisante''. Nous avons donc choisit de définir nous même la profondeur de l'arbre. Une trop grande profondeur n'est pas forcément souhaitable pour les résultats et est toujours synonimes de plus de calcul, trop peu de profondeur ne permet pas non plus une bonne classification. Par défault nous utilisons une profondeur de 8 pour 3 features. La profondeur des arbres idéale est liée au.
-
--> Choix heuristique de classification (moyenne / densité)  ok 
--> Nombre d'arbre sélection
--> Decision finale (\% de vote)
-
+	\subsection{Système de vote}
+	On peut se demander à partir de quel pourcentage des votes doit on classifier en tant que background. Nous avons trouvé que le bon
+	seuil est 80\% des arbres votant en tant que bakcground.
 \section{Resultat}
 
 \section{Conclusion}
@@ -136,7 +155,7 @@ La profondeur des arbres est encore un paramètre à déterminer, nous aurions p
 \begin{thebibliography}{2}
    \bibitem{gradient} http://en.wikipedia.org/wiki/Image\_gradient
    \bibitem{sobel} http://en.wikipedia.org/wiki/Sobel\_operator
-  
+   \bibitem{hsv} http://en.wikipedia.org/wiki/HSL\_and\_HSV  
 \end{thebibliography}
 
 
