@@ -1,4 +1,4 @@
-\documentclass[8pt,a4paper]{report}
+\documentclass[8pt,a4paper]{article}
 \usepackage{ifpdf}
 \usepackage[utf8]{inputenc}
 \usepackage[francais]{babel}
@@ -6,6 +6,9 @@
 \usepackage{listings}
 \usepackage{multicol}
 \usepackage{array}
+\textwidth 17cm
+\oddsidemargin 0cm
+\evensidemargin -1cm
 
 
 \title{ELEC 2885 : Image processing and computer  \\ Project \\
@@ -99,7 +102,7 @@ qui ne bougent pas, par conséquent notre technique ne fonctionnera qu'avec des 
 			Le premier critère que nous avons imaginé est de calculer une sorte d'entropie sur la densité de feuilles : 
 			Soit $d_{i}$ la densité de la feuille $i$, les densités étant pondérées pour valoir $1$, on calcule le critère 
 			
-			\[ C = -\sum_{i} d_{i}\log{D_{i}} \]
+			\[ C = -\sum_{i} d_{i}\log{d_{i}} \]
 
 			Des grands $C$ représentent un grand nombre de feuilles contenant un petit nombre de pixels, Au contraire, un petit $C$
 			représente un petit nombre de feuilles avec un grand nombre de pixels, et donc un meilleur groupement des pixels
