@@ -29,7 +29,7 @@ def load(dossier_in) :
 		
 				for im in Image :
 					s = Sample(im.getSample((i,j)), im.getFrame())
-					im.setBG((i,j), treeSet.isSampleBG2(s))
+					im.setBG((i,j), treeSet.isSampleBG2(s), 10)
 					#print treeSet.isSampleBG(s) , " " , im.getFrame()
 					
 					#print "----"
@@ -38,7 +38,7 @@ def load(dossier_in) :
 	for im in Image :
 		coord  = (15,10)
 	
-		im.save("out", 0.80, False)
+		im.save("out", 0.80, True)
 		
 	
 
