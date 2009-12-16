@@ -106,7 +106,7 @@ L'approche par arbres aléatoire permet de classer les pixels selon plusieurs cr
 			Jusqu'a présent, l'algorithme utilise lors de la décision les pixels appartenant à tous les temps. Cela veut dire qu'il
 			utilise les temps futurs, qui pourraient ne pas être disponibles si l'algorithme doit s'exécuter en temps réel. Cela
 			pause aussi des problèmes pour des objets qui bougent et qui s'arrètent un long laps de temps. S'ils restent plus
-			de 50\% du temps au même endroit il devient difficile de savoir si l'objet appartient au background ou non.
+			de 50\% du temps total au même endroit il devient difficile de savoir si l'objet appartient au background ou non.
 
 			Il est donc possible pendant la décision de ne considérer que les pixels appartenant au passé pour un certain nombre de 
 			frames, cependant si on utilise un critère de qualité d'arbre, il faut recalculer et retrier à chaque frame.
@@ -116,17 +116,21 @@ Il y a de nombreux paramètres à mettre aux points. Il y a trop de paramètres 
 
 Dans un premier temps, savoir quelle features choisir, nous avons effectués des tests avec juste l'intensité et ensuite avec l'intensité et les deux gradients. 
 
-\% Gradient est une bonne idée
+% Gradient est une bonne idée
 
 Dans un second temps, la quantité d'arbre aléatoire utilisé pour classifié peut-être choisie. Ici, il faut trouver le juste milieu entre trop d'arbres qui consommerait beaucoup de temps de calcul et pas assez qui ne serait pas assez précis.
 
-La profondeur des arbres est encore un paramètre à déterminer, nous aurions pu décider d'arrêter la profondeur de l'arbre lorsque la découpe des bornes serait suffissante mais il aurait quand même fallut déterminer ``la découpe suffisante''. Nous avons donc choisit de définir nous même la profondeur de l'arbre. Une trop grande profondeur n'est pas forcément souhaitable pour les résultats et est toujours synonimes de plus de calcul, trop peu de profondeur ne permet pas non plus une bonne classification. Par défault nous utilisons une profondeur de 8 pour 3 features. La profondeur des arbres idéale est liée au.
+La profondeur des arbres est encore un paramètre à déterminer, nous aurions pu décider d'arrêter la profondeur de l'arbre lorsque la découpe des bornes serait suffissante mais il aurait quand même fallut déterminer ``la découpe suffisante''. Nous avons donc choisit de définir nous même la profondeur de l'arbre. Une trop grande profondeur n'est pas forcément souhaitable pour les résultats et est toujours synonimes de plus de calcul, trop peu de profondeur ne permet pas non plus une bonne classification. Par défault nous utilisons une profondeur de 8 pour 3 features. La profondeur des arbres idéale est liée au nombre de features.
+
+
 
 -> Choix heuristique de classification (moyenne / densité)  ok 
 -> Nombre d'arbre sélection
 -> Decision finale (\% de vote)
 
 \section{Resultat}
+Les résultats sont des résultats visuels, plus le pixel est noir moins il a de probabilité d'être dans le background. Si on reconstitue un film avec les images générer on doit voir des taches noir qui se déplace sur un fond blanc. Pour rendre plus net le résultat, nous appliquons une fonction qui renvoie foreground (noir) ou background (blanc) en fonction de la probabilité du point d'appartenir au background et un seuil qu'il faut déterminer (par exemple 0.8). 
+Le choix de l'heuristique est évident quand on regarde les videos \textit{heuristique 1} et \textit{heuristique 2}
 
 \section{Conclusion}
 
@@ -141,11 +145,6 @@ La profondeur des arbres est encore un paramètre à déterminer, nous aurions p
 
 
 
-
-
-
-=======
->>>>>>> 4dd90c096516e901d0bca16527fa2b6a10b4728c:repport/repport.tex
 
 
 \end{document}
