@@ -26,13 +26,90 @@ Benoit Macq \\ Christophe Devleeschouwer \\ Antonin Descampe}
 
 \section{Introduction}
 Dans ce projet nous essayons de séparer les éléments du background de ceux du foreground. Nous définissons le background comme les éléments du décors
-qui ne bouge pas, par conséquent notre technique ne fonctionnera qu'avec des images prises d'une caméra fixe. 
+qui ne bougent pas, par conséquent notre technique ne fonctionnera qu'avec des images prises d'une caméra fixe. 
 
 \section{Features extractions}
 L'approche par arbres aléatoire permet de classer les pixels selon plusieurs critères. Ils nous faut donc dans un premier temps définir ces critères. La première feature est l'intensité du pixel, c'est à dire la moyenne des trois composants RGB. Nous avons extrait deux autres features le gradient de l'intensité selon l'horizontale et selon la verticale \cite{gradient} grâce à l'opérateur de convolution de Sobel \cite{sobel}. Nous chargons les images grâce à la bibliothèque \textit{PIL} (Python Image Library). Cette api nous donne un tuple contenant les composantes RBG de l'image pour chaque pixel. L'intensité ce calcul directement et pour la gradient les détails de l'implémentation se trouve dans le fichier \textit{jpg.py} dans la fonction \textit{g()} et les tables des hash \textit{x} et \textit{y} correspondent aux matrices de convolution.  
 
 
 \section{Random Forest classification}
+
+	Nous avons donc en entrée une suite d'images dont chaque pixel est défini par un vecteur de features.
+	Si on regarde l'évolution temporelle des features d'un pixel, on remarque qu'on obtient des valeurs très
+	semblables lorsqu'il fait partie du bakcground. Si on fait un histogramme des features on remarque un pic
+	pour les pixels appartenant au bakckground, et d'autres pics plus petits pour les pixels appartenant aux
+	éléments transients. 
+
+	Pour classer un pixel, on le place dans l'histogramme et on regarde s'il se trouve dans le pic principal. 
+	Habituellement, cet histogramme est modélisé par une mixture de gaussienne. Nous allons ici modéliser cet
+	histogramme par un arbre binaire totalement aléatoire. L'avantage étant que l'arbre binaire peut traiter
+	plus facilement un grand nombre de features.
+
+	L'arbre binaire totalement aléatoire sépare à chaque noeud l'espace des features, avec une feature et une
+	valeur de séparation choisies aléatoirement selon une distribution uniforme. Les feuilles de l'arbre 
+	contiennent la liste des pixels correspondant. L'arbre est construit dynamiquement à chaque ajout de pixel,
+	en respectant un critère de profondeur maximale.
+
+	On s'attend donc à ce que les pics de l'histogramme se traduisent en feuilles remplies de nombreux samples.
+
+	Pour déterminer si un pixel appartient au background, on retrouve la feuille de l'arbre correspondant et on
+	détermine avec une heuristique si cette feuille correspond à un pic du background ou non. Pour améliorer
+	la précision de ce processus très aléatoire on crée un grand nombre d'arbre par pixel que l'on fait ensuite
+	voter.
+
+	\subsection{Heuristique}
+		\subsubsection{Heuristique1}
+			Pour déterminer si une feuille appartient à un pic, on calcule le nombre moyen de pixel par
+			feuille, et on regarde si la feuille correspondante a une taille supérieure ou inférieure
+			à cette moyenne. On peut paramétriser cette heuristique en multipliant préalablement la moyenne
+			par un facteur.
+
+			Cette heuristique a plusieurs inconvénients. Premièrement une feuille peut avoir un grand nombre
+			de pixels car elle représente un grande partie de l'espace des features. Ensuite si le nombre de
+			feuilles est trop grand par rapport au nombre de pixels, les feuilles ne contiendront plus suffisemment
+			de pixels pour pouvoir faire la différence entre les pics et les creux.
+		\subsubsection{Heuristique2}
+			Cette heuristique travaille sur la densité des feuilles, c'est à dire le nombre de pixels divisé par le
+			volume de l'espace de feature correspondant à la feuille.  Comme précédemment on calcule la densité 
+			moyenne des feuilles. Si la densité d'une feuille est supérieure à la moyenne, on la considère comme faisant
+			partie du background.
+
+			Comme chaque feuille contient au moins un pixel, la densité d'une feuille ne contenant qu'un pixel n'est pas
+			représentative. On remarque que les densités de ces feuilles peuvent varier de trois ordres de grandeur, bien
+			au delà des pics réels. Elles sont donc ignorées dans le calcul de la moyenne, et automatiquement classées
+			comme faisant partie du foreground. 
+
+			Cette heuristique est donc également vulnérable aux arbres trop profond et ayant trop de feuilles. 
+
+	\subsection{Améliorations}
+		Comme vu précédemment, augmenter la profondeur de l'arbre pose problème car cela crée un trop grand nombre de feuilles, 
+		et empèche ainsi les heuristiques de bien fonctionner. Cela pose problème car plus on augmente le nombre de features,
+		plus il faut que l'arbre soit profond afin d'avoir la chance de discriminer sur chaque feature. 
+
+		Pour contourner ce problème, on va déterminer un critère de qualité de l'arbre, et ensuite ne faire de décision que sur
+		les arbres de bonne qualité. 
+		\subsubsection{Critère de qualité}
+			Le premier critère que nous avons imaginé est de calculer une sorte d'entropie sur la densité de feuilles : 
+			Soit $d_{i}$ la densité de la feuille $i$, les densités étant pondérées pour valoir $1$, on calcule le critère 
+			
+			\[ C = -\sum_{i} d_{i}\log{D_{i}} \]
+
+			Des grands $C$ représentent un grand nombre de feuilles contenant un petit nombre de pixels, Au contraire, un petit $C$
+			représente un petit nombre de feuilles avec un grand nombre de pixels, et donc un meilleur groupement des pixels
+			similaires. 
+
+			Nous générons donc pour chaque pixel un grand nombre d'arbres et décidons sur les arbres ayant le $C$ le plus petit.
+
+			Il faut cependant remarquer que cette amélioration se fait au prix d'une dégradation importante des performances,
+			le calcul de l'entropie et le tri des arbres n'étant pas gratuits.
+		\subsubsection{Fenêtre de décision}
+			Jusqu'a présent, l'algorithme utilise lors de la décision les pixels appartenant à tous les temps. Cela veut dire qu'il
+			utilise les temps futurs, qui pourraient ne pas être disponibles si l'algorithme doit s'exécuter en temps réel. Cela
+			pause aussi des problèmes pour des objets qui bougent et qui s'arrètent un long laps de temps. S'ils restent plus
+			de 50\% du temps au même endroit il devient difficile de savoir si l'objet appartient au background ou non.
+
+			Il est donc possible pendant la décision de ne considérer que les pixels appartenant au passé pour un certain nombre de 
+			frames, cependant si on utilise un critère de qualité d'arbre, il faut recalculer et retrier à chaque frame.
 
 \section{Tuning des paramètres}
 Il y a de nombreux paramètres à mettre aux points. Il y a trop de paramètres différents pour pouvoir tous les comparés, nous avons donc travailler à trouver l'optimal pour un paramètre à la fois. 
@@ -52,6 +129,7 @@ La profondeur des arbres est encore un paramètre à déterminer, nous aurions p
 \section{Resultat}
 
 \section{Conclusion}
+
 	
 	
 \section{Bibliographie}	
@@ -66,6 +144,8 @@ La profondeur des arbres est encore un paramètre à déterminer, nous aurions p
 
 
 
+=======
+>>>>>>> 4dd90c096516e901d0bca16527fa2b6a10b4728c:repport/repport.tex
 
 
 \end{document}
