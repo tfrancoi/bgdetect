@@ -14,30 +14,24 @@ def load(dossier_in) :
 		print file
 		Image.append(jpg.Ima(dossier_in + "/" + file, i))
 		i += 1
-		print i
-	
-	
-	
 		
 	
 	for j in xrange(0, Image[0].getHeight()) :
 			for i in xrange(0, Image[0].getWidth()) :
-				treeSet = TreeSet(40, 3, 255, 1)
+				treeSet = TreeSet(40, 3, 255, 8)
 				for im in Image : 
 					s = Sample(im.getSample((i,j)), im.getFrame())
 					treeSet.insertSample(s)
 		
 				for im in Image :
 					s = Sample(im.getSample((i,j)), im.getFrame())
-					im.setBG((i,j), treeSet.isSampleBG2(s,20))
+					im.setBG((i,j), treeSet.isSampleBG2(s,5))
 					#print treeSet.isSampleBG(s) , " " , im.getFrame()
 					
 					#print "----"
 			print j	
 	
 	for im in Image :
-		coord  = (15,10)
-	
 		im.save("out", 0.80, False)
 		
 	

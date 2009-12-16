@@ -283,7 +283,7 @@ def compare1(tree1,tree2,first = 0, last = -1):
 def compare2(tree1,tree2):
 	h1 = tree1.getDensityEntropy(0,-1)
 	h2 = tree2.getDensityEntropy(0,-1)
-	if(h1 < h2):
+	if(h1 > h2):
 		return 1
 	elif (h1 == h2):
 		return 0
