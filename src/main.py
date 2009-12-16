@@ -22,7 +22,7 @@ def load(dossier_in) :
 	
 	for j in xrange(0, Image[0].getHeight()) :
 			for i in xrange(0, Image[0].getWidth()) :
-				treeSet = TreeSet(40, 3, 255, 8)
+				treeSet = TreeSet(20, 3, 255, 8)
 				for im in Image : 
 					s = Sample(im.getSample((i,j)), im.getFrame())
 					treeSet.insertSample(s)
@@ -38,13 +38,13 @@ def load(dossier_in) :
 	for im in Image :
 		coord  = (15,10)
 	
-		im.save("out", 0.80, True)
+		im.save("out", 0.80, False)
 		
 	
 
 
 def main():
-	dossier_in = "in"
+	dossier_in = "imp"
 	dossier_out = "out"
 	os.system("mkdir out")
 	load(dossier_in)

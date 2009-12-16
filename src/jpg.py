@@ -104,16 +104,19 @@ class Ima :
 				
 		return (sum1, sum2, sum3)
 	
-	def getSample(self, coord) :
+	def getSample(self, coord, gradient = True) :
 		pixel = self.getPixel(coord)
 		intens = (pixel[0] + pixel[1] + pixel[2]) / 3
-		gx = self.gx(coord)
-		gx = (((gx[0] + gx[1] + gx[2]) / 3) + 1024 ) / 2048.0 * 255
-		gx = int(gx)
-		gy = self.gy(coord)
-		gy = (((gy[0] + gy[1] + gy[2]) / 3) + 1024 ) /2048.0 * 255
-		gy = int(gy)
-		return [intens, gx, gy]
+		if gradient :			
+			gx = self.gx(coord)
+			gx = (((gx[0] + gx[1] + gx[2]) / 3) + 1024 ) / 2048.0 * 255
+			gx = int(gx)
+			gy = self.gy(coord)
+			gy = (((gy[0] + gy[1] + gy[2]) / 3) + 1024 ) /2048.0 * 255
+			gy = int(gy)
+			return [intens, gx, gy]
+		else :
+			return [intens]
 		
 	def getFrame(self) :
 		return self.frame
@@ -130,7 +133,7 @@ class Ima :
 	def getBG(self) :
 		return self.bg
 		
-	def save(self, dossier_in, tolerance, filtre) :
+	def save(self, dossier_in, tolerance = 0.8, filtre = False) :
 		data = []
 		for j in xrange(0, self.height) :
 			for i in xrange(0, self.width) :
