@@ -32,13 +32,13 @@ def load(dossier_in) :
 			print j	
 	
 	for im in Image :
-		im.save("out", 0.80, False)
+		im.save("out", 0.80, True)
 		
 	
 
 
 def main():
-	dossier_in = "imp"
+	dossier_in = "in"
 	dossier_out = "out"
 	os.system("mkdir out")
 	load(dossier_in)
